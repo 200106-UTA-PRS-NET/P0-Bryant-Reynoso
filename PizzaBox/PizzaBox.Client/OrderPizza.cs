@@ -413,11 +413,25 @@ namespace PizzaBox.Client
 
                     if (db.Orders.Any())
                     {
-                        Console.WriteLine("print all orders");
+                        var query = db.Orders;
+                        foreach (var order in query)
+                        { 
+                            Console.WriteLine($" User: {order.Userid}, Store: {order.Storeid}, Time: {order.TimeOrdered},  Pizzas: {order.Pizzas}   Total: ${order.Total}");
+                        }
+
+                        Console.WriteLine();
+                        Console.WriteLine("Press any key to go back");
+                        Console.ReadKey();
+
+                        EmployeePrompts();
                     }
                     else
                     {
                         Console.WriteLine("no orders to show");
+
+                        Console.WriteLine();
+                        Console.WriteLine("Press any key to go back");
+                        Console.ReadKey();
                     }
                     break;
             }
@@ -447,11 +461,27 @@ namespace PizzaBox.Client
 
                     if (db.Orders.Any(u => u.Userid == userId))
                     {
-                        Console.WriteLine("print all orders");
+                        var query = db.Orders.Where(u => u.Userid == userId);
+                        foreach (var order in query)
+                        {
+                            Console.WriteLine($"Store: {order.Storeid}, Time: {order.TimeOrdered},  Pizzas: {order.Pizzas}   Total: ${order.Total}");
+                        }
+
+                        Console.WriteLine();
+                        Console.WriteLine("Press any key to go back");
+                        Console.ReadKey();
+
+                        UserPrompts(userId);
                     }
                     else
                     {
                         Console.WriteLine("no orders to show");
+
+                        Console.WriteLine();
+                        Console.WriteLine("Press any key to go back");
+                        Console.ReadKey();
+
+                        UserPrompts(userId);
                     }
                    
                     break;
@@ -492,6 +522,7 @@ namespace PizzaBox.Client
         public KeyValuePair<string,decimal> ChooseSize(Order order)
         {
             SelectSize:
+            Console.Clear();
             Pizza pizza = new Pizza();
             Dictionary<int, string> panSizes = new Dictionary<int, string>();
             List<int> realIds = new List<int>();
@@ -804,14 +835,15 @@ namespace PizzaBox.Client
          
         public void FinishOrder(Order order, Pizza pizza)
         {
-            Orders saveOrder = new Orders();
-            string combinedString;
+            Orders saveOrder = new Orders(); 
             List<string> pizzaNames = new List<string>();
+            string combinedString;
+
             foreach (var p in order.pizzasInOrder)
             {
                  pizzaNames.Add(p.pizzaName);
             }
-           combinedString =  string.Join(",",pizzaNames);
+            combinedString =  string.Join(",",pizzaNames);
             
 
             saveOrder.Pizzas = combinedString;
@@ -824,10 +856,19 @@ namespace PizzaBox.Client
             Console.WriteLine($"userId: {saveOrder.Userid}");
             Console.WriteLine($"storeId: {saveOrder.Storeid}");
             Console.WriteLine($"Time Ordered: {saveOrder.TimeOrdered}"); 
-            Console.WriteLine($"Total: {saveOrder.Total}");
+            Console.WriteLine($"Order Total: ${(decimal)saveOrder.Total}");
 
-           // db.Orders.Add(saveOrder);
+            
+            db.Orders.Add(saveOrder);
+            db.SaveChanges();
+
+            UserPrompts(order.userId);
+
+
+            Console.ReadKey();
         }
+
+
         //private void ChooseToppings(Order order)
         //{
         //   // throw new NotImplementedException();

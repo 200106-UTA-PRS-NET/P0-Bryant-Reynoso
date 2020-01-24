@@ -12,10 +12,12 @@ namespace PizzaBox.Client
     { 
         static void Main(string[] args)
         {
+            //PizzaDbContext db = new PizzaDbContext();
             OrderPizza orderPizza = new OrderPizza();
-            //orderPizza.ChooseSigning();
-            //orderPizza.ChooseLocation(1);
-            orderPizza.StartOrder(1,3);
+            
+            orderPizza.ChooseSigning();
+            //orderPizza.ViewUserOrders(3);
+            
 
             Console.WriteLine();
             Console.WriteLine();
